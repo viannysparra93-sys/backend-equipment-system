@@ -37,10 +37,14 @@ export class EquipmentService {
 }
 
   // Actualizar
-  async update(id: number, data: Partial<CreateEquipmentDto>): Promise<Equipment> {
-    await this.equipmentRepository.update(id, data);
-    return this.findOne(id);
+  async update(id: number, updateDto: Partial<CreateEquipmentDto>): Promise<Equipment> {
+  await this.equipmentRepository.update(id, updateDto);
+  const updated = await this.equipmentRepository.findOneBy({ id });
+  if (!updated) {
+    throw new Error(`Equipo con ID ${id} no encontrado`);
   }
+  return updated;
+}
 
   // Eliminar
   async remove(id: number): Promise<void> {
