@@ -1,23 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Equipment {
-  @PrimaryGeneratedColumn() 
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() 
+  @Column()
   name: string;
 
   @Column()
-  brand: string; 
+  brand: string;
 
   @Column()
   model: string;
 
-  @Column() 
+  @Column()
   type: string;
 
-  @Column() 
+  @Column()
   status: string;
 
   @Column()
