@@ -8,6 +8,7 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 
 import { EquipmentService } from './equipment.service';
@@ -20,35 +21,40 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
+import { AuthGuard } from '@nestjs/passport';
+
 @ApiTags('equipment')
+@ApiBearerAuth() // Indica a Swagger que usa Bearer Token
 @Controller('equipment')
+@UseGuards(AuthGuard('jwt')) // Protege **todas** las rutas del módulo
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 
   // ---------------------------------------------------------
-  // GET ALL
+  // GET ALL - LISTAR TODOS LOS EQUIPOS
   // ---------------------------------------------------------
   @Get()
   @ApiOperation({ summary: 'Listar todos los equipos' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de equipos',
+    description: 'Lista completa de equipos registrados',
   })
   findAll() {
     return this.equipmentService.getAll();
   }
 
   // ---------------------------------------------------------
-  // GET BY ID
+  // GET BY ID - OBTENER EQUIPO POR ID
   // ---------------------------------------------------------
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener un equipo por ID' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiOperation({ summary: 'Obtener un equipo por su ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del equipo' })
   @ApiResponse({
     status: 200,
-    description: 'Equipo encontrado',
+    description: 'Equipo encontrado correctamente',
   })
   @ApiResponse({ status: 404, description: 'Equipo no encontrado' })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -56,16 +62,16 @@ export class EquipmentController {
   }
 
   // ---------------------------------------------------------
-  // CREATE EQUIPMENT
+  // CREATE EQUIPMENT - CREAR NUEVO EQUIPO
   // ---------------------------------------------------------
   @Post()
-  @ApiOperation({ summary: 'Crear un nuevo equipo' })
+  @ApiOperation({ summary: 'Registrar un nuevo equipo' })
   @ApiResponse({
     status: 201,
-    description: 'Equipo creado correctamente',
+    description: 'Equipo creado exitosamente',
   })
   @ApiBody({
-    description: 'Datos para crear un nuevo equipo',
+    description: 'Datos necesarios para crear un equipo',
     type: CreateEquipmentDto,
   })
   create(@Body() createDto: CreateEquipmentDto) {
@@ -107,10 +113,10 @@ export class EquipmentController {
   }
 
   // ---------------------------------------------------------
-  // DELETE
+  // DELETE - ELIMINAR EQUIPO
   // ---------------------------------------------------------
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un equipo por ID' })
+  @ApiOperation({ summary: 'Eliminar un equipo por su ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({
     status: 200,

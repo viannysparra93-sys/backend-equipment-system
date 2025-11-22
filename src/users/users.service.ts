@@ -8,21 +8,31 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Creo un usuario nuevo usando Prisma.
+   * Crear un usuario nuevo usando Prisma.
    */
   create(data: CreateUserDto) {
     return this.prisma.usuario.create({ data });
   }
 
   /**
-   * Obtengo todos los usuarios registrados.
+   * Obtener todos los usuarios registrados.
    */
   findAll() {
     return this.prisma.usuario.findMany();
   }
 
   /**
-   * Obtengo un usuario por su ID.
+   * Buscar un usuario por su correo.
+   * Este método es esencial para el módulo de autenticación.
+   */
+  findByEmail(email: string) {
+    return this.prisma.usuario.findUnique({
+      where: { email },
+    });
+  }
+
+  /**
+   * Obtener un usuario por su ID.
    */
   async findOne(id: number) {
     const usuario = await this.prisma.usuario.findUnique({
@@ -37,7 +47,7 @@ export class UsersService {
   }
 
   /**
-   * Actualizo un usuario existente.
+   * Actualizar un usuario existente.
    */
   update(id: number, data: UpdateUserDto) {
     return this.prisma.usuario.update({
@@ -47,7 +57,7 @@ export class UsersService {
   }
 
   /**
-   * Elimino un usuario por ID.
+   * Eliminar un usuario por ID.
    */
   remove(id: number) {
     return this.prisma.usuario.delete({
