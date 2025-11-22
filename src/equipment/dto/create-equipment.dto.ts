@@ -1,29 +1,47 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, Min } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateEquipmentDto {
   @ApiProperty({ example: 'Portátil', description: 'Nombre del equipo' })
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'HP', description: 'Marca del equipo' })
+  @ApiProperty({ example: 'ABC12345', description: 'Número serial único' })
   @IsString()
-  brand: string;
+  serial: string;
 
-  @ApiProperty({ example: 'Pavilion 15', description: 'Modelo del equipo' })
+  @ApiProperty({ example: 'HP', description: 'Marca del equipo', required: false })
+  @IsOptional()
   @IsString()
-  model: string;
+  brand?: string;
 
-  @ApiProperty({ example: 'Computador', description: 'Tipo de equipo' })
+  @ApiProperty({ example: 'Pavilion 15', description: 'Modelo del equipo', required: false })
+  @IsOptional()
   @IsString()
-  type: string;
+  model?: string;
 
-  @ApiProperty({ example: 'Disponible', description: 'Estado actual del equipo' })
+  @ApiProperty({ example: 'Computador portátil para oficina', description: 'Descripción del equipo', required: false })
+  @IsOptional()
   @IsString()
-  status: string;
+  description?: string;
 
-  @ApiProperty({ example: 5, description: 'Cantidad disponible del equipo' })
-  @IsInt()
-  @Min(1)
-  quantity: number;
+  @ApiProperty({
+    example: 'OPERATIVO',
+    description: 'Estado del equipo',
+    default: 'OPERATIVO',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  state?: string;
+
+  @ApiProperty({
+    example: 'active',
+    description: 'Estatus del equipo',
+    default: 'active',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  status?: string;
 }

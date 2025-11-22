@@ -1,54 +1,42 @@
-// src/equipment/equipment.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Equipment } from './equipment.entity';
-import { CreateEquipmentDto } from './dto/create-equipment.dto';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+
 
 @Injectable()
 export class EquipmentService {
-  constructor(
-    @InjectRepository(Equipment)
-    private readonly equipmentRepository: Repository<Equipment>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   // Obtener todos los equipos
-  async findAll(): Promise<Equipment[]> {
-    return this.equipmentRepository.find();
+  async getAll() {
+    return this.prisma.equipment.findMany();
   }
 
-  // Obtener por id
-  async findOne(id: number): Promise<Equipment> {
-    const item = await this.equipmentRepository.findOneBy({ id });
-    if (!item) throw new NotFoundException(`Equipment with id ${id} not found`);
-    return item;
+  // Obtener un equipo por ID
+  async getById(id: number) {
+    return this.prisma.equipment.findUnique({
+      where: { id },
+    });
   }
 
-// Crear nuevo equipo
- async create(createDto: CreateEquipmentDto): Promise<Equipment> {
-
-  const entity: Equipment = this.equipmentRepository.create(createDto);
-
-  // Se guarda en la base de datos y se espera el resultado
-  const savedEntity = await this.equipmentRepository.save(entity);
-
-  // Se retorna el objeto completo ya almacenado
-  return savedEntity;
-}
-
-  // Actualizar
-  async update(id: number, updateDto: Partial<CreateEquipmentDto>): Promise<Equipment> {
-  await this.equipmentRepository.update(id, updateDto);
-  const updated = await this.equipmentRepository.findOneBy({ id });
-  if (!updated) {
-    throw new Error(`Equipo con ID ${id} no encontrado`);
+  // Crear un equipo
+  async create(data: any) {
+    return this.prisma.equipment.create({
+      data,
+    });
   }
-  return updated;
-}
 
-  // Eliminar
-  async remove(id: number): Promise<void> {
-    const result = await this.equipmentRepository.delete(id);
-    if (result.affected === 0) throw new NotFoundException(`Equipment with id ${id} not found`);
+  // Actualizar un equipo
+  async update(id: number, data: any) {
+    return this.prisma.equipment.update({
+      where: { id },
+      data,
+    });
+  }
+
+  // Eliminar un equipo
+  async delete(id: number) {
+    return this.prisma.equipment.delete({
+      where: { id },
+    });
   }
 }

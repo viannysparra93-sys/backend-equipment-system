@@ -12,7 +12,7 @@
     "baseUrl": "./",
     "incremental": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/maintenance"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
 

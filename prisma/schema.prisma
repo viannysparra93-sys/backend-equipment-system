@@ -1,0 +1,45 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  email     String   @unique
+  password  String
+  rol       String   @default("user")
+  estado    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipment {
+  id          Int           @id @default(autoincrement())
+  name        String
+  serial      String        @unique
+  model       String?
+  brand       String?
+  description String?
+  state       String        @default("OPERATIVO")
+  status      String        @default("active")
+  createdAt   DateTime      @default(now())
+  maintenances Maintenance[]
+}
+
+  // tipo de datos que almacenará y cómo se relaciona con la tabla Equipment
+
+model Maintenance {
+  id          Int        @id @default(autoincrement())
+  equipmentId Int
+  description String
+  date        DateTime
+  performedBy String
+  status      String
+  equipment   Equipment   @relation(fields: [equipmentId], references: [id]) //Relación directa con el equipo
+}

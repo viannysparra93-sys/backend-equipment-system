@@ -1,9 +1,19 @@
-import { 
-  Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe 
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
 } from '@nestjs/common';
+
 import { EquipmentService } from './equipment.service';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
-import { Equipment } from './equipment.entity';
+import { UpdateEquipmentDto } from './dto/update-equipment.dto';
+
 import {
   ApiTags,
   ApiOperation,
@@ -17,80 +27,97 @@ import {
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
 
+  // ---------------------------------------------------------
+  // GET ALL
+  // ---------------------------------------------------------
   @Get()
   @ApiOperation({ summary: 'Listar todos los equipos' })
   @ApiResponse({
     status: 200,
     description: 'Lista de equipos',
-    type: [Equipment],
   })
-  findAll(): Promise<Equipment[]> {
-    return this.equipmentService.findAll();
+  findAll() {
+    return this.equipmentService.getAll();
   }
 
+  // ---------------------------------------------------------
+  // GET BY ID
+  // ---------------------------------------------------------
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un equipo por ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID del equipo' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiResponse({
     status: 200,
     description: 'Equipo encontrado',
-    type: Equipment,
   })
   @ApiResponse({ status: 404, description: 'Equipo no encontrado' })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Equipment> {
-    return this.equipmentService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.equipmentService.getById(id);
   }
 
+  // ---------------------------------------------------------
+  // CREATE EQUIPMENT
+  // ---------------------------------------------------------
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo equipo' })
   @ApiResponse({
     status: 201,
     description: 'Equipo creado correctamente',
-    type: Equipment,
   })
   @ApiBody({
     description: 'Datos para crear un nuevo equipo',
     type: CreateEquipmentDto,
   })
-  create(@Body() createDto: CreateEquipmentDto): Promise<Equipment> {
+  create(@Body() createDto: CreateEquipmentDto) {
     return this.equipmentService.create(createDto);
   }
 
+  // ---------------------------------------------------------
+  // PUT - ACTUALIZACIÓN COMPLETA
+  // ---------------------------------------------------------
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar un equipo por ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID del equipo a actualizar' })
+  @ApiOperation({ summary: 'Actualizar completamente un equipo por ID' })
+  @ApiParam({ name: 'id', type: Number })
   @ApiResponse({
     status: 200,
-    description: 'Equipo actualizado correctamente',
-    type: Equipment,
-  })
-  @ApiResponse({ status: 404, description: 'Equipo no encontrado' })
-  @ApiBody({
-    description: 'Datos a actualizar del equipo',
-    schema: {
-      example: {
-        name: 'Portátil Lenovo',
-        brand: 'Lenovo',
-        model: 'ThinkPad E15',
-        type: 'Computador',
-        status: 'En mantenimiento',
-        quantity: 3,
-      },
-    },
+    description: 'Equipo actualizado correctamente (PUT)',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateDto: Partial<CreateEquipmentDto>,
-  ): Promise<Equipment> {
-    return this.equipmentService.update(id, updateDto);
+    @Body() updateEquipmentDto: UpdateEquipmentDto,
+  ) {
+    return this.equipmentService.update(id, updateEquipmentDto);
   }
 
+  // ---------------------------------------------------------
+  // PATCH - ACTUALIZACIÓN PARCIAL
+  // ---------------------------------------------------------
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar parcialmente un equipo por ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Equipo actualizado parcialmente (PATCH)',
+  })
+  updatePartial(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEquipmentDto: UpdateEquipmentDto,
+  ) {
+    return this.equipmentService.update(id, updateEquipmentDto);
+  }
+
+  // ---------------------------------------------------------
+  // DELETE
+  // ---------------------------------------------------------
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un equipo por ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID del equipo a eliminar' })
-  @ApiResponse({ status: 200, description: 'Equipo eliminado correctamente' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Equipo eliminado correctamente',
+  })
   @ApiResponse({ status: 404, description: 'Equipo no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.equipmentService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.equipmentService.delete(id);
   }
 }

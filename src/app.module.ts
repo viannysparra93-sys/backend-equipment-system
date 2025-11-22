@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { PrismaModule } from './prisma.module';
+import { UsersModule } from './users/users.module';
 import { EquipmentModule } from './equipment/equipment.module';
-import { Equipment } from './equipment/equipment.entity';
+import { MaintenanceModule } from './maintenance/maintenance.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite', // o 'mysql' si usas MySQL
-      database: 'database.sqlite', // nombre del archivo de BD
-      entities: [Equipment],
-      synchronize: true, // crea las tablas automáticamente
-    }),
+    PrismaModule,
+    UsersModule,
     EquipmentModule,
+    MaintenanceModule,
   ],
 })
 export class AppModule {}
