@@ -29,8 +29,15 @@ model Equipment {
   state       String        @default("OPERATIVO")
   status      String        @default("active")
   createdAt   DateTime      @default(now())
+
+  // Relacion con mantenimientos
   maintenances Maintenance[]
+
+  // Relacion con Location
+   locationId    Int?
+  location      Location?   @relation(fields: [locationId], references: [id])
 }
+
 
   // tipo de datos que almacenará y cómo se relaciona con la tabla Equipment
 
@@ -42,4 +49,16 @@ model Maintenance {
   performedBy String
   status      String
   equipment   Equipment   @relation(fields: [equipmentId], references: [id]) //Relación directa con el equipo
+}
+
+model Location {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  floor       String?
+  area        String?
+  responsible String?
+
+  // Relación con equipos
+  equipment   Equipment[]
 }
